@@ -1,0 +1,75 @@
+#title {
+  margin: auto;
+  align: center;
+  color: green;
+  font-size: 30px;
+  font-weight: bold;
+  min-width: 500px;
+}
+.search-btn {
+  background-color: #10a010;
+  border-color: black;
+  border-radius: 12px;
+  padding: 6px;
+  margin: 10px;
+}
+
+.taxonomy-category {
+  font-weight: bold;
+  font-size: 23px;
+  margin: 5px;
+  color: brown;
+}
+
+.centering {
+  justifyContent: "center";
+  alignItems: "center";
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+
+.wikipedia-text {
+  font-size: 16px;
+}
+
+.taxonomy-value {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.help-text {
+  font-size: 12px;
+}
+
+.side-panel {
+  float: left;
+  width: 20%;
+}
+
+/* Clear floats after the columns */
+.main:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Useless? */
+img {
+  padding: 0;
+  margin: 0;
+}
+
+.float {
+  float:left;
+}
+
+.extra-info-title {
+  font-weight: bold;
+}
+
+.extra-info-div {
+  padding: 20px;
+  padding-right: 70px;
+
+}
