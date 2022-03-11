@@ -73,3 +73,13 @@ img {
   padding-right: 70px;
 
 }
+
+.navlink {
+  padding: 1.5em;
+  background-color: #10a010;
+  border-color: black;
+  border-radius: 1.2em;
+  padding: 1em;
+  margin: 10em;
+
+}

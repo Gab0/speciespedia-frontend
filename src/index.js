@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './style.css';
-import MainPage from './Page';
+
+import MainPage from './Navbar'
+
+
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(

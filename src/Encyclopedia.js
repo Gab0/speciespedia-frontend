@@ -198,18 +198,8 @@ class SearchForm extends React.Component {
 }
 
 
-class TitleScreen extends React.Component {
-  render() {
-    return (
-      <div id="title" className="centering">
-        Species Information Aggregator.
-      </div>
-    );
-  }
 
-}
-
-class MainPage extends React.Component {
+class Encyclopedia extends React.Component {
   constructor(props) {
     super(props);
 
@@ -270,7 +260,6 @@ class MainPage extends React.Component {
 
   render() {
     return <div className="centering">
-             <TitleScreen/>
              <SearchForm
                handleSubmit={this.handleSubmit.bind(this)}
                updateQuery={this.updateQuery.bind(this)}
@@ -284,4 +273,4 @@ class MainPage extends React.Component {
   }
 }
 
-export default MainPage;
+export default Encyclopedia;
