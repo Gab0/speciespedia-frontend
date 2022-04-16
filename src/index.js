@@ -10,9 +10,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <MainPage
-    backendUrl="http://localhost:5000"
-    />
+    <MainPage />
   </React.StrictMode>,
   document.getElementById('root')
 );

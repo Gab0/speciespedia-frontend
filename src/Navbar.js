@@ -17,7 +17,6 @@ class TitleScreen extends React.Component {
 
 }
 
-
 const Navbar = () => {
   return (
   <div>
@@ -27,18 +26,19 @@ const Navbar = () => {
   );
 }
 
-
 class MainPage extends React.Component {
   render () {
-    return <Router>
-             <TitleScreen/>
-             <Navbar/>
-             <Routes>
-               <Route path='/' element={<Encyclopedia
-                                                backendUrl="http://localhost:5000"/>} />
-               <Route path='/game' element={<GameWindow/>} />
-             </Routes>
-           </Router>
+
+    return <center>
+             <Router>
+               <TitleScreen/>
+               <Navbar/>
+               <Routes>
+                 <Route path='/' element={<Encyclopedia/>} />
+                 <Route path='/game' element={<GameWindow/>} />
+               </Routes>
+             </Router>
+           </center>
   }
 }
 
