@@ -10,7 +10,7 @@ class TitleScreen extends React.Component {
   render() {
     return (
       <div id="title" className="centering">
-        Species Information Aggregator.
+        Biodiversity Education Node
       </div>
     );
   }
@@ -19,9 +19,9 @@ class TitleScreen extends React.Component {
 
 const Navbar = () => {
   return (
-  <div>
+  <div className="menu">
       <Link to="/" className="navlink">Encyclopedia</Link>
-      <Link to="/game" className="navlink">Game</Link>
+      <Link to="/game" className="navlink">Taxonomy Game</Link>
   </div>
   );
 }

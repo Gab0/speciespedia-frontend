@@ -1,7 +1,7 @@
  
 import axios from 'axios';
 
-const backendUrl = "http://localhost:5000"
+const backendUrl = "http://localhost:5000";
 
 function backendRequest(endpoint, data) {
 

@@ -80,8 +80,16 @@ img {
   border-color: black;
   border-radius: 1.2em;
   margin: 2em;
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
 
 }
+
+.navlink:hover {
+  background-color: #aa77bb
+}
+
 #cy {
     position: absolute;
     left: 0;
@@ -89,4 +97,9 @@ img {
     right: 0;
     bottom: 0;
     z-index: 999;
+}
+
+.menu {
+  padding-top: 1em;
+  padding-bottom: 3em;
 }

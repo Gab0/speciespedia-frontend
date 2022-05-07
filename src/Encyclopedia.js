@@ -1,6 +1,7 @@
 import React from 'react';
 import { RemoteResult, SpeciesInformation } from './Types.ts'
 import backendRequest from './Backend.js';
+import ReactLoading from 'react-loading';
 
 function taxonomyField(fieldname: String, fieldvalue: String) {
   if (fieldvalue) {
@@ -64,12 +65,12 @@ class TaxonomyDisplay extends React.Component {
     return (
       this.taxonomy_fields.map(field => taxonomyField(
         field,
-        this.processTaxonomyField(taxonomy["speciesInformation" + field]))
+        this.processTaxonomicField(taxonomy["speciesInformation" + field]))
     )
     )
 
     }
-  processTaxonomyField(value: String) {
+  processTaxonomicField(value: String) {
     if (value == null) return "-"
     return value
   }
@@ -95,8 +96,21 @@ class SpeciesDisplay extends React.Component {
     this.display = this.display.bind(this);
   }
 
-  displayImage(url) {
+  displayImage(url: String) {
     return <img src={url} alt="Visual depiction."></img>
+  }
+
+  displayImages(data) {
+    console.log(data);
+    console.log(data.tag);
+    if (data.tag === "NotAvailable") {
+      return <div>No images found.</div>
+    }
+    console.log("Showing images....")
+    return (<div>
+              { data.contents.slice(0, 16).map(this.displayImage) }
+            </div>
+           )
   }
 
   display() {
@@ -114,9 +128,7 @@ class SpeciesDisplay extends React.Component {
         </div>
         <div className="main-panel">
 
-          <div>
-            { content.remoteResultImages.slice(0, 16).map(this.displayImage) }
-          </div>
+         { this.displayImages(content.remoteResultImages) }
 
           <div>
             <div className="float">
@@ -139,7 +151,7 @@ class SpeciesDisplay extends React.Component {
             <br/>
             </div>
         <div className="wikipedia-text">
-          {content.remoteResultWikipedia}
+          {this.render_wikipedia(content.remoteResultWikipedia)}
         </div>
         </div>
         </div>
@@ -165,13 +177,22 @@ class SpeciesDisplay extends React.Component {
       </div>
     );
   }
+
+  render_wikipedia(data) {
+    if (data.tag === "Retrieved") {
+      return data.contents;
+    }
+  }
 }
 
 
 class SearchForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {query: ""};
+    this.state = {
+      query: "",
+      loading: false
+    };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -189,10 +210,17 @@ class SearchForm extends React.Component {
           Search:
           <input type="text" value={this.state.query} onChange={this.handleChange} />
         </label>
-        <input type="submit" className="search-btn" value="Submit" />
+      {this.submit_btn()}
       </form>
       </div>
     );
+  }
+
+  submit_btn() {
+    if (this.state.loading) {
+      return <ReactLoading type="spokes" color="#55dd44"/>;
+    }
+     return <input type="submit" className="search-btn" value="Submit" />
   }
 }
 
@@ -231,7 +259,7 @@ class Encyclopedia extends React.Component {
 
     // PREPARE SEARCH REQUEST;
     // LOAD REMOTE DATA:
-
+    this.setState({loading: true});
     backendRequest('/search.json', data)
         .then((response) => {
           var content = response.data
@@ -246,7 +274,7 @@ class Encyclopedia extends React.Component {
           console.log(res);
 
           this.setState({query: this.state.query, content: res});
-
+          this.setState({loading: false});
         });
   }
 
