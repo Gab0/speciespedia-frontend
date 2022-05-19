@@ -24,3 +24,5 @@ interface IRemoteResult {
   remoteResultImages: string[];
   remoteResultWikipedia: string | null;
 }
+
+export {};

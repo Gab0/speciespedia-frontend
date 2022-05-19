@@ -2,14 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import './style.css';
-import MainPage from './Page';
+
+import MainPage from './Navbar'
+
+
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <MainPage
-    backendUrl="http://localhost:5000"
-    />
+    <MainPage />
   </React.StrictMode>,
   document.getElementById('root')
 );

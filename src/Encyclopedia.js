@@ -1,5 +1,7 @@
 import React from 'react';
 import { RemoteResult, SpeciesInformation } from './Types.ts'
+import backendRequest from './Backend.js';
+import ReactLoading from 'react-loading';
 
 function taxonomyField(fieldname: String, fieldvalue: String) {
   if (fieldvalue) {
@@ -36,9 +38,11 @@ function extraInformation(fieldname: String, fieldvalue: String) {
 function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
+
 function extractConservationStatus(statuses: string[]): string {
   return statuses.filter(onlyUnique).join(", ")
 }
+
 function extractVernacularNames(vernacular: VernacularName[]): string {
   return vernacular.map(v => v.vernacularNameVernacularName).join(", ")
 }
@@ -47,7 +51,6 @@ class TaxonomyDisplay extends React.Component {
 
   constructor(props) {
     super(props);
-    this.readContent = this.props.readContent;
     this.taxonomy_fields = [
       "Kingdom",
       "Phylum",
@@ -62,20 +65,19 @@ class TaxonomyDisplay extends React.Component {
     return (
       this.taxonomy_fields.map(field => taxonomyField(
         field,
-        this.processTaxonomyField(taxonomy["speciesInformation" + field]))
+        this.processTaxonomicField(taxonomy["speciesInformation" + field]))
     )
     )
 
     }
-  processTaxonomyField(value: String) {
+  processTaxonomicField(value: String) {
     if (value == null) return "-"
     return value
   }
 
-
   render() {
     try {
-      var k = this.readContent().remoteResultInformation;
+      var k = this.props.readContent().remoteResultInformation;
     } catch(e) {
       console.log(e);
     }
@@ -87,14 +89,28 @@ class TaxonomyDisplay extends React.Component {
   }
 
 }
+
 class SpeciesDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.display = this.display.bind(this);
   }
 
-  displayImage(url) {
+  displayImage(url: String) {
     return <img src={url} alt="Visual depiction."></img>
+  }
+
+  displayImages(data) {
+    console.log(data);
+    console.log(data.tag);
+    if (data.tag === "NotAvailable") {
+      return <div>No images found.</div>
+    }
+    console.log("Showing images....")
+    return (<div>
+              { data.contents.slice(0, 16).map(this.displayImage) }
+            </div>
+           )
   }
 
   display() {
@@ -112,9 +128,7 @@ class SpeciesDisplay extends React.Component {
         </div>
         <div className="main-panel">
 
-          <div>
-            { content.remoteResultImages.slice(0, 16).map(this.displayImage) }
-          </div>
+         { this.displayImages(content.remoteResultImages) }
 
           <div>
             <div className="float">
@@ -137,7 +151,7 @@ class SpeciesDisplay extends React.Component {
             <br/>
             </div>
         <div className="wikipedia-text">
-          {content.remoteResultWikipedia}
+          {this.render_wikipedia(content.remoteResultWikipedia)}
         </div>
         </div>
         </div>
@@ -163,21 +177,27 @@ class SpeciesDisplay extends React.Component {
       </div>
     );
   }
+
+  render_wikipedia(data) {
+    if (data.tag === "Retrieved") {
+      return data.contents;
+    }
+  }
 }
 
 
 class SearchForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {query: ""};
+    this.state = {
+      query: "",
+      loading: false
+    };
     this.handleChange = this.handleChange.bind(this);
-    this.backendUrl = this.props.backendUrl;
   }
 
   handleChange(event) {
-    // FIXME: Duplicated attributes?
-    var k = event.target.value
-    this.query = k;
+    var k = event.target.value;
     this.props.updateQuery(k);
     this.setState({query: k});
   }
@@ -190,31 +210,27 @@ class SearchForm extends React.Component {
           Search:
           <input type="text" value={this.state.query} onChange={this.handleChange} />
         </label>
-        <input type="submit" className="search-btn" value="Submit" />
+      {this.submit_btn()}
       </form>
       </div>
     );
   }
-}
 
-
-class TitleScreen extends React.Component {
-  render() {
-    return (
-      <div id="title" className="centering">
-        Species Information Aggregator.
-      </div>
-    );
+  submit_btn() {
+    if (this.state.loading) {
+      return <ReactLoading type="spokes" color="#55dd44"/>;
+    }
+     return <input type="submit" className="search-btn" value="Submit" />
   }
-
 }
 
-class MainPage extends React.Component {
+
+
+class Encyclopedia extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {query: '', content: {}};
-    this.backendUrl = this.props.backendUrl;
   }
 
   readContent() {
@@ -225,8 +241,8 @@ class MainPage extends React.Component {
     return this.state.query;
   }
 
-  updateQuery(q) {
-    this.state.query=q;
+  updateQuery(query_string) {
+    this.setState({query: query_string});
   }
 
   handleSubmit(event) {
@@ -242,39 +258,31 @@ class MainPage extends React.Component {
     console.log(data);
 
     // PREPARE SEARCH REQUEST;
-    var request = new XMLHttpRequest();
-    request.open('POST', this.backendUrl + '/search.json', true);
-    request.setRequestHeader('Content-Type', 'application/json');
-    request.setRequestHeader('Accept', 'application/json');
-
     // LOAD REMOTE DATA:
-    request.onload = function (e) {
+    this.setState({loading: true});
+    backendRequest('/search.json', data)
+        .then((response) => {
+          var content = response.data
+          var err: RemoteResult = content.Left;
+          if (err) {
+            console.log("Search request error:", err);
+            return
+          }
+          var res: RemoteResult = content.Right;
 
-      var err: RemoteResult = JSON.parse(request.responseText).Left;
-      if (err) {
-      console.log("Request error:", err);
-      }
-      var res: RemoteResult = JSON.parse(request.responseText).Right;
+          console.log("Search request OK.");
+          console.log(res);
 
-      console.log("Sending request.");
-      console.log(res);
-
-
-      this.setState({query: this.state.query, content: res});
-    }.bind(this)
-
-    var sdata = JSON.stringify(data);
-    request.send(sdata);
+          this.setState({query: this.state.query, content: res});
+          this.setState({loading: false});
+        });
   }
-
 
   render() {
     return <div className="centering">
-             <TitleScreen/>
              <SearchForm
                handleSubmit={this.handleSubmit.bind(this)}
                updateQuery={this.updateQuery.bind(this)}
-               backendUrl={this.backendUrl}
              />
              <SpeciesDisplay
                readContent={this.readContent.bind(this)}
@@ -284,4 +292,4 @@ class MainPage extends React.Component {
   }
 }
 
-export default MainPage;
+export default Encyclopedia;
