@@ -1,85 +1,24 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-import CytoscapeComponent from 'react-cytoscapejs';
 import ReactLoading from 'react-loading';
 
 import backendRequest from './Backend.js'
 
-import { render } from "react-dom";
+import SpeciesCard from './Game/SpeciesCard'
 
-import { Image,
-         Stage,
-         Group,
+import { Stage,
          Layer,
-         Circle,
          Rect,
-         Line,
-         Text
        } from 'react-konva';
 
-
-// Stolen from https://konvajs.org/docs/react/Images.html;
-class URLImage extends React.Component {
-  state = {
-    image: null,
-  };
-  componentDidMount() {
-    this.loadImage();
-  }
-  componentDidUpdate(oldProps) {
-    if (oldProps.src !== this.props.src) {
-      this.loadImage();
-    }
-  }
-  componentWillUnmount() {
-    this.image.removeEventListener('load', this.handleLoad);
-  }
-  loadImage() {
-    // save to "this" to remove "load" handler on unmount
-    this.image = new window.Image();
-    this.image.src = this.props.src;
-    this.image.addEventListener('load', this.handleLoad);
-  }
-  handleLoad = () => {
-    // after setState react-konva will update canvas and redraw the layer
-    // because "image" property is changed
-    this.setState({
-      image: this.image,
-    });
-    // if you keep same image object during source updates
-    // you will have to update layer manually:
-    // this.imageNode.getLayer().batchDraw();
-  };
-  render() {
-
-    return (
-      <Image
-        x={this.props.x}
-        y={this.props.y}
-        image={this.state.image}
-        fill={'gray'}
-        ref={(node) => {
-          this.imageNode = node;
-        }}
-        cornerRadius={70}
-        width={100}
-        height={100}
-        shadowBlur={10}
-        onDragStart={this.handleDragStart}
-        onDragEnd={this.handleDragEnd}
-      />
-    );
-  }
-}
-
-
-
-class GameWindow extends React.Component {
+export default class GameWindow extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       gameSession: {},
+      speciesCards: {},
       loading: false,
+      scoreResult: null
     }
   }
 
@@ -90,24 +29,15 @@ class GameWindow extends React.Component {
 
     backendRequest('/game/new')
       .then((response) => {
-        this.setState({loading: false, gameSession: response.data});
+        this.setState({
+          loading: false,
+          gameSession: response.data,
+          stage: this.createStage(),
+        });
+
         console.log(response);
 
       });
-  }
-
-  selectImage (imgData) {
-    if (imgData.tag !== "Retrieved") return null;
-    try {
-    return imgData.contents[0];
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
-  }
-
-  stylizeSpeciesName (name) {
-    return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   renderNodes () {
@@ -125,122 +55,203 @@ class GameWindow extends React.Component {
 
     return species.map((sp, index) => {
       return (
-          <Group
-            x={120 + index * 30}
-            y={120 + index * 30}
-            id={sp.remoteResultScientificName}
-            draggable
-          >
-          <URLImage
-            src={this.selectImage(sp.remoteResultImages)}
-          />
-          <Text
-            text={this.stylizeSpeciesName(sp.remoteResultScientificName)}
-            fontSize={15}
-            x={0}
-            y={110}
-          />
-          </Group>
+        <SpeciesCard
+          x={120 + index * 30}
+          y={120 + (index / 1.41) * 30}
+          key={index}
+          species={sp.remoteResultScientificName}
+          images={sp.remoteResultImages}
+          tracker={this.state.speciesCards}
+        />
       )
     });
-  }
-
-  handleDragStart (e) {
 
   }
-  handleDragEnd (e) {
 
+  isGameRunning () {
+     return Object.keys(this.state.gameSession).length !== 0;
   }
 
   render () {
-    console.log(this.state.gameSession);
-
     if (this.state.loading) {
       return <ReactLoading type="spokes" color="#55dd44"/>;
     }
-    var noGame = Object.keys(this.state.gameSession).length === 0;
+
     //var noGame = false;
-    if (noGame) {
-      return <div>
-               "Game is not running."
-      <form onSubmit={this.requestGame.bind(this)}>
-               <input type="submit" className="search-btn" value="New Game" />
-               </form>
-             </div>
-    } else {
+    if (this.isGameRunning()) {
       return this.renderStage();
     }
+
+    return <div>
+             <form onSubmit={this.requestGame.bind(this)}>
+               <input type="submit" className="navlink navbtn" value="Deal Samples" />
+             </form>
+           </div>
   }
 
-  fetchHelpText() {
+  fetchHelpText(): string {
     var tips;
     try {
       tips = this.state.gameSession.textTip;
     } catch (e) {
       console.log(e);
     }
-    return "Drag these species samples to form up to three groups. " + tips;
+    return "Drag these species samples to form groups. " + tips;
   }
 
-  renderGroupZones(w, h) {
-    var breakpoints = [0, w/3, 2 * w / 3];
-    var colors = ["red", "purple", "orange", "cyan", "grey", "pink", "blue"];
+  generateBreakPoints(n: number, w: number): Array[number] {
+    var breakpoints = [];
+    for (var i in Array.from(Array(n).keys())) {
+      breakpoints.push(i * w / n);
+    }
+    return breakpoints;
+  }
+
+  shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+    while (currentIndex !== 0) {
+
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+
+    return array;
+  }
+
+  renderGroupZones(w: number, h: number) {
+    var breakpoints = this.generateBreakPoints(this.state.gameSession.nbGroups, w);
+
+    // Use random group zone colors on each game session;
+    var colors = this.shuffle(["red", "purple", "orange", "cyan", "grey", "pink", "blue"]);
 
     var areas = breakpoints.map((v, idx) => {
        return (
          <Rect
+          key={idx}
           x={breakpoints[idx]}
           y={0}
           width={w / 3}
           height={h}
           fill={colors[idx]}
+          id={"zone" + idx}
          />
        )
     });
 
-    //this.setState({areas: areas});
+    console.log("AREAS", areas)
     return areas
   }
 
-  renderStage() {
-
-    var stage_w = window.innerWidth;
+  createStage() {
+    var stage_w = window.innerWidth * 0.66;
     var stage_h = 500;
-    return (
-      <div>
-      <Stage width={stage_w} height={stage_h}>
+
+    //<Text text={this.fetchHelpText()} fontSize={15} x={60} y={10}/>
+    return <Stage width={stage_w} height={stage_h}>
         <Layer>
           {this.renderGroupZones(stage_w, stage_h)}
         </Layer>
         <Layer>
-          <Text text={this.fetchHelpText()} fontSize={15} x={40}/>
             {this.renderNodes()}
         </Layer>
-
         </Stage>
-            <form onSubmit={this.submitGroups}>
-            <input type="submit" className="search-btn" value="Submit result"/>
-            </form>
+  }
+
+  renderStage() {
+    let epilogue;
+    if (this.state.scoreResult === null) {
+      epilogue = null;
+    } else {
+      epilogue = <ScoreWindow toggle={this.togglePop} score={this.state.scoreResult}/>
+    }
+    return (
+      <div>
+        <center>{this.fetchHelpText()}</center>
+        {this.createStage()}
+        { epilogue }
+        { this.renderSubmitAnswer() }
       </div>
     );
     }
 
-  evaluate () {
+  renderSubmitAnswer() {
+    return <form onSubmit={this.submitGroups.bind(this)}>
+             <input type="submit" className="navlink navbtn" value="Done!"/>
+           </form>
+  }
+  // Read each Species node positions from the Stage,
+  // and calculate in which category the player put them into.
+  extractCategorization (): string[] {
+    var breakpoints = this.generateBreakPoints(
+      this.state.gameSession.nbGroups,
+      this.state.stage.props.width
+    );
 
+    var results: string[][] = new Array(breakpoints.length)
+        .fill(false)
+        .map(() => []);
 
-
+    // Iterate over our species card tracker.
+    Object.entries(this.state.speciesCards).forEach(entry => {
+      const [speciesName, posX] = entry;
+      var category: number = 0;
+      breakpoints.forEach((breakpoint, index) => {
+        if (posX > breakpoint) {
+          category = index;
+        }
+      });
+      results[category].push(speciesName);
+    });
+    return results;
   }
 
-  submitGroups () {
-    this.setState({loading: true});
-    var data = this.evaluate();
-    backendRequest('/game/results', data)
+  toggleScore () {
+   this.setState({
+    seen: !this.state.seen
+   });
+  };
+
+  submitGroups (event) {
+    console.log("Submitting...");
+    event.preventDefault();
+    //this.setState({loading: true});
+
+    var answerData = {
+      speciesGroups: this.extractCategorization.bind(this)(),
+      answerTaxonomicDiscriminators: this.state.gameSession.gameTaxonomicDiscriminators
+    }
+
+    this.toggleScore();
+    backendRequest('/game/answer', answerData)
       .then((response) => {
-        this.setState({loading: false, gameSession: response.data});
+        this.setState({
+          loading: false,
+          scoreResult: response.data.gameResultScore
+        });
         console.log(response);
       });
   }
 
+  showResults () {
+
+  }
+
 }
 
-export default GameWindow;
+
+class ScoreWindow extends Component {
+  handleClick = () => {
+   this.props.toggle();
+  };
+
+  render() {
+    return (
+      <div className="">
+          <span className="score-view">Score: {Math.round(this.props.score * 100)}%</span>
+      </div>
+  );
+ }
+}

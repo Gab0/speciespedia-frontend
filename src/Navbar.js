@@ -20,8 +20,9 @@ class TitleScreen extends React.Component {
 const Navbar = () => {
   return (
   <div className="menu">
-      <Link to="/" className="navlink">Encyclopedia</Link>
-      <Link to="/game" className="navlink">Taxonomy Game</Link>
+      <Link to="/" className="navlink navelt">Encyclopedia</Link>
+      <Link to="/game" className="navlink navelt">Taxonomy Simulator</Link>
+      <Link to="/devnotes" className="navlink navelt">About</Link>
   </div>
   );
 }
