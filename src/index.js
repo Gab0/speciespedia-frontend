@@ -6,7 +6,6 @@ import './style.css';
 
 import MainPage from './Navbar'
 
-
 import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
