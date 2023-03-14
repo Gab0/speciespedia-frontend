@@ -144,7 +144,7 @@ export default class GameWindow extends React.Component {
       )
     });
 
-    console.log("AREAS", areas)
+    console.log("AREAS", areas);
     return areas
   }
 
@@ -158,7 +158,7 @@ export default class GameWindow extends React.Component {
           {this.renderGroupZones(stage_w, stage_h)}
         </Layer>
         <Layer>
-            {this.renderNodes()}
+          {this.renderNodes()}
         </Layer>
         </Stage>
   }
@@ -170,6 +170,7 @@ export default class GameWindow extends React.Component {
     } else {
       epilogue = <ScoreWindow toggle={this.togglePop} score={this.state.scoreResult}/>
     }
+
     return (
       <div>
         <center>{this.fetchHelpText()}</center>
@@ -252,16 +253,14 @@ export default class GameWindow extends React.Component {
 }
 
 
-class ScoreWindow extends Component {
-  handleClick = () => {
-   this.props.toggle();
+const ScoreWindow = (props) => {
+  const handleClick = () => {
+    props.toggle();
   };
 
-  render() {
-    return (
-      <div className="">
-          <span className="score-view">Score: {Math.round(this.props.score * 100)}%</span>
-      </div>
+  return (
+    <div className="">
+      <span className="score-view">Score: {Math.round(props.score * 100)}%</span>
+    </div>
   );
- }
-}
+};
