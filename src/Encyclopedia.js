@@ -63,13 +63,14 @@ class TaxonomyDisplay extends React.Component {
 
   displaySpeciesTaxonomy(taxonomy: SpeciesInformation) {
     return (
-      this.taxonomy_fields.map(field => taxonomyField(
-        field,
-        this.processTaxonomicField(taxonomy["speciesInformation" + field]))
+      this.taxonomy_fields.map(
+        field => taxonomyField(
+          field,
+          this.processTaxonomicField(taxonomy["speciesInformation" + field]))
+      )
     )
-    )
+  }
 
-    }
   processTaxonomicField(value: String) {
     if (value == null) return "-"
     return value
