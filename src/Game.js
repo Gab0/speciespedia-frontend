@@ -99,10 +99,10 @@ export default class GameWindow extends React.Component {
     return "Drag these species samples to form groups. " + tips;
   }
 
-  generateBreakPoints(n: number, w: number): Array[number] {
+  generateBreakPoints(n: number, totalWidth: number): Array[number] {
     var breakpoints = [];
     for (var i in Array.from(Array(n).keys())) {
-      breakpoints.push(i * w / n);
+      breakpoints.push(i * totalWidth / n);
     }
     return breakpoints;
   }
@@ -121,24 +121,27 @@ export default class GameWindow extends React.Component {
     return array;
   }
 
-  renderGroupZones(w: number, h: number) {
-    var breakpoints = this.generateBreakPoints(this.state.gameSession.nbGroups, w);
+  renderGroupZones(totalWidth: number, h: number) {
+    var breakpoints = this.generateBreakPoints(
+      this.state.gameSession.nbGroups, totalWidth
+    );
 
     // Use random group zone colors on each game session;
     var colors = this.shuffle(["red", "purple", "orange", "cyan", "grey", "pink", "blue"]);
 
     var areas = breakpoints.map((v, idx) => {
-       return (
-         <Rect
+      var width = breakpoints[1] - breakpoints[0];
+      return (
+        <Rect
           key={idx}
           x={breakpoints[idx]}
           y={0}
-          width={w / 3}
+          width={width}
           height={h}
           fill={colors[idx]}
           id={"zone" + idx}
-         />
-       )
+        />
+      )
     });
 
     console.log("AREAS", areas)
