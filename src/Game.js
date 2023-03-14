@@ -174,8 +174,8 @@ export default class GameWindow extends React.Component {
       <div>
         <center>{this.fetchHelpText()}</center>
         {this.createStage()}
-        { epilogue }
-        { this.renderSubmitAnswer() }
+        {epilogue}
+        {this.state.scoreResult === 1 ? this.renderNewGameButton() : this.renderSubmitAnswer()}
       </div>
     );
     }
@@ -185,6 +185,13 @@ export default class GameWindow extends React.Component {
              <input type="submit" className="navlink navbtn" value="Done!"/>
            </form>
   }
+
+  renderNewGameButton() {
+    return <form onSubmit={this.requestGame.bind(this)}>
+             <input type="submit" className="navlink navbtn" value="New Game"/>
+           </form>
+  }
+
   // Read each Species node positions from the Stage,
   // and calculate in which category the player put them into.
   extractCategorization (): string[] {
