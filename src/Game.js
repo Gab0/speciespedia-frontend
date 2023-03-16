@@ -48,14 +48,6 @@ export default class GameWindow extends React.Component {
     var species = this.state.gameSession.species;
 
     if (species === undefined) return;
-    var sample = [
-      {
-        remoteResultScientificName: "Capybara",
-        remoteResultImages: {
-          tag: "Retrieved",
-          content: ["https://www.rainforest-alliance.org/wp-content/uploads/2021/06/capybara-square-1.jpg.optimal.jpg"]}
-      }
-    ]
 
     return species.map((sp, index) => {
       return (
@@ -147,7 +139,6 @@ export default class GameWindow extends React.Component {
       )
     });
 
-    console.log("AREAS", areas);
     return areas
   }
 
@@ -182,7 +173,7 @@ export default class GameWindow extends React.Component {
         {this.state.scoreResult === 1 ? this.renderNewGameButton() : this.renderSubmitAnswer()}
       </div>
     );
-    }
+  }
 
   renderSubmitAnswer() {
     return <form onSubmit={this.submitGroups.bind(this)}>
@@ -255,12 +246,7 @@ export default class GameWindow extends React.Component {
 
 }
 
-
 const ScoreWindow = (props) => {
-  const handleClick = () => {
-    props.toggle();
-  };
-
   return (
     <div className="">
       <span className="score-view">Score: {Math.round(props.score * 100)}%</span>
