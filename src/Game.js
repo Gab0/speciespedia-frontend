@@ -25,7 +25,11 @@ export default class GameWindow extends React.Component {
   requestGame(event) {
     event.preventDefault();
 
-    this.setState({loading: true});
+    this.setState({
+      loading: true,
+      scoreResult: null,
+      colors: this.shuffle(["red", "purple", "orange", "cyan", "grey", "pink", "blue"])
+    });
 
     backendRequest('/game/new')
       .then((response) => {
@@ -127,7 +131,6 @@ export default class GameWindow extends React.Component {
     );
 
     // Use random group zone colors on each game session;
-    var colors = this.shuffle(["red", "purple", "orange", "cyan", "grey", "pink", "blue"]);
 
     var areas = breakpoints.map((v, idx) => {
       var width = breakpoints[1] - breakpoints[0];
@@ -138,7 +141,7 @@ export default class GameWindow extends React.Component {
           y={0}
           width={width}
           height={h}
-          fill={colors[idx]}
+          fill={this.state.colors[idx]}
           id={"zone" + idx}
         />
       )
