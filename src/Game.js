@@ -220,7 +220,7 @@ export default class GameWindow extends React.Component {
   };
 
   submitGroups (event) {
-    console.log("Submitting...");
+
     event.preventDefault();
     //this.setState({loading: true});
 
@@ -229,14 +229,17 @@ export default class GameWindow extends React.Component {
       answerTaxonomicDiscriminators: this.state.gameSession.gameTaxonomicDiscriminators
     }
 
+    console.log("Submitting response", answerData);
+
     this.toggleScore();
+
     backendRequest('/game/answer', answerData)
       .then((response) => {
         this.setState({
           loading: false,
           scoreResult: response.data.gameResultScore
         });
-        console.log(response);
+        console.log("Score response", response);
       });
   }
 

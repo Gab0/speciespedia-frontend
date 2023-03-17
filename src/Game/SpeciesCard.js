@@ -31,10 +31,8 @@ export default class SpeciesCard extends Component {
   }
 
   selectImage (imgData) {
-    console.log(imgData.tag)
     if (imgData.tag !== "Retrieved") return null;
     try {
-      console.log("IMG OK.")
       return imgData.contents[0];
     } catch (e) {
       console.log(e);
