@@ -1,7 +1,9 @@
  
 import axios from 'axios';
 
-const backendUrl = "http://localhost:5000";
+const backendServer = process.env.REACT_APP_BACKEND_ADDRESS || "localhost";
+
+export const backendUrl = "http://" + backendServer + ":5000";
 
 function backendRequest(endpoint, data) {
 

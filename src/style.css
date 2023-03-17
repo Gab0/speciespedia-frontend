@@ -74,12 +74,14 @@ img {
 
 }
 
-.navlink {
+.navelt {
+  margin: 2em;
   padding: 0.5em;
+}
+.navlink {
   background-color: #10a010;
   border-color: black;
   border-radius: 1.2em;
-  margin: 2em;
   font-weight: bold;
   color: black;
   text-decoration: none;
@@ -102,4 +104,17 @@ img {
 .menu {
   padding-top: 1em;
   padding-bottom: 3em;
+}
+
+.navbtn {
+  border: none;
+  font-size: 1.4em;
+  padding: 0.3em;
+  margin: 1em;
+}
+
+.score-view {
+  color: #70c060;
+  font-weight: bold;
+  font-size: 1.8em;
 }

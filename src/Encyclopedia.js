@@ -63,13 +63,14 @@ class TaxonomyDisplay extends React.Component {
 
   displaySpeciesTaxonomy(taxonomy: SpeciesInformation) {
     return (
-      this.taxonomy_fields.map(field => taxonomyField(
-        field,
-        this.processTaxonomicField(taxonomy["speciesInformation" + field]))
+      this.taxonomy_fields.map(
+        field => taxonomyField(
+          field,
+          this.processTaxonomicField(taxonomy["speciesInformation" + field]))
+      )
     )
-    )
+  }
 
-    }
   processTaxonomicField(value: String) {
     if (value == null) return "-"
     return value
@@ -114,6 +115,9 @@ class SpeciesDisplay extends React.Component {
   }
 
   display() {
+    if (this.props.readContent() === null) {
+      return
+    }
     try {
       var content = this.props.readContent();
       //return JSON.stringify(obj)
@@ -206,10 +210,8 @@ class SearchForm extends React.Component {
     return (
       <div className="search-form centering">
       <form onSubmit={this.props.handleSubmit}>
-        <label>
-          Search:
+        <label>          Encyclopedia Query:        </label>
           <input type="text" value={this.state.query} onChange={this.handleChange} />
-        </label>
       {this.submit_btn()}
       </form>
       </div>
@@ -220,7 +222,7 @@ class SearchForm extends React.Component {
     if (this.state.loading) {
       return <ReactLoading type="spokes" color="#55dd44"/>;
     }
-     return <input type="submit" className="search-btn" value="Submit" />
+     return <input type="submit" className="navlink navbtn" value="Search" />
   }
 }
 
