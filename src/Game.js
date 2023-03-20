@@ -10,7 +10,9 @@ import { Stage,
          Rect,
        } from 'react-konva';
 
-export default class GameWindow extends React.Component {
+const colors = ["red", "purple", "orange", "cyan", "grey", "pink", "blue"];
+
+export default class GameWindow extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -27,7 +29,6 @@ export default class GameWindow extends React.Component {
     this.setState({
       loading: true,
       scoreResult: null,
-      colors: this.shuffle(["red", "purple", "orange", "cyan", "grey", "pink", "blue"])
     });
 
     backendRequest('/game/new')
