@@ -21,8 +21,9 @@ type RemoteResult = IRemoteResult;
 interface IRemoteResult {
   remoteResultOriginalQuery: string;
   remoteResultInformation: SpeciesInformation;
+  remoteResultScientificName: string;
   remoteResultImages: string[];
   remoteResultWikipedia: string | null;
 }
 
-export {};
+export type { RemoteResult, SpeciesInformation };
