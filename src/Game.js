@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
-import ReactLoading from 'react-loading';
-
 import backendRequest from './Backend.js'
 
+import Loading from './Loading.js'
 import SpeciesCard from './Game/SpeciesCard'
 
 import { Stage,
@@ -70,7 +69,7 @@ export default class GameWindow extends React.Component {
 
   render () {
     if (this.state.loading) {
-      return <ReactLoading type="spokes" color="#55dd44"/>;
+      <Loading/>
     }
 
     //var noGame = false;
