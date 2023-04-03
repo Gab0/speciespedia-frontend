@@ -9,7 +9,8 @@ interface SpeciesProps {
   y: number,
   tracker: any,
   species: RemoteResult,
-  images: string[]
+  images: string[],
+  debug: boolean
 }
 
 const SpeciesCard = (props: SpeciesProps) => {
@@ -55,7 +56,8 @@ const SpeciesCard = (props: SpeciesProps) => {
   };
 
   const speciesName: string = extractSpeciesName(props.species);
-  const shownSpeciesName: string = stylizeSpeciesName(extractSpeciesNameDebug(props.species));
+  const shownSpeciesNameDebug: string = stylizeSpeciesName(extractSpeciesNameDebug(props.species));
+  const shownSpeciesName: string = stylizeSpeciesName(extractSpeciesName(props.species));
 
   const handleClick = (event: any) => {
     switch (event.detail) {
@@ -72,8 +74,8 @@ const SpeciesCard = (props: SpeciesProps) => {
 
   return (
     <Group x={props.x} y={props.y} id={speciesName} draggable onDragEnd={onDragEnd} key={speciesName} onClick={handleClick}>
-       <URLImage src={selectImage(props.images)} />
-       <Text text={shownSpeciesName} fontSize={15} x={labelOffset(shownSpeciesName)} y={110} />
+       <URLImage x={0} y={0} src={selectImage(props.images)} onDragEnd={onDragEnd} />
+       <Text text={props.debug ? shownSpeciesNameDebug : shownSpeciesName} fontSize={15} x={labelOffset(shownSpeciesName)} y={110} />
     </Group>
   );
 

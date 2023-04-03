@@ -37,6 +37,7 @@ class MainPage extends React.Component {
                <Routes>
                  <Route path='/' element={<Encyclopedia/>} />
                  <Route path='/game' element={<GameWindow/>} />
+                 <Route path='/game/debug' element={<GameWindow debug={true}/>} />
                </Routes>
              </Router>
            </center>

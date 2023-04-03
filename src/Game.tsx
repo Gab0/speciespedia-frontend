@@ -4,6 +4,7 @@ import backendRequest from './Backend.js'
 
 import Loading from './Loading.js'
 import SpeciesCard from './Game/SpeciesCard'
+import ScoreWindow from './Game/ScoreWindow'
 
 import { RemoteResult, GameAnswer, GameSetup } from './Types';
 
@@ -14,7 +15,11 @@ import { Stage,
 
 const defaultColors = ["red", "purple", "orange", "cyan", "grey", "pink", "blue"];
 
-const GameWindow = () => {
+interface GameProps {
+  debug: boolean
+}
+
+const GameWindow = (props: GameProps) => {
 
   const [gameSession, setGameSession] = useState<GameSetup | {}>({});
   const [speciesCards, setSpeciesCards] = useState({});
@@ -68,6 +73,7 @@ const GameWindow = () => {
           species={sp}
           images={sp.remoteResultImages}
           tracker={speciesCards}
+          debug={props.debug}
         />
       )
     });
@@ -130,7 +136,7 @@ const GameWindow = () => {
       gameSession.nbGroups, totalWidth
     );
 
-    var areas = breakpoints.map((v: number, idx: number) => {
+    var areas = breakpoints.map((_idx: number, idx: number) => {
       var width = breakpoints[1] - breakpoints[0];
       return (
         <Rect
@@ -171,6 +177,7 @@ const GameWindow = () => {
       epilogue = <ScoreWindow
                    score={scoreResult}
                    speciesCards={speciesCards}
+                   debug={props.debug}
                  />
     }
 
@@ -213,6 +220,7 @@ const GameWindow = () => {
     // Iterate over our species card tracker.
     Object.entries(speciesCards).forEach(entry => {
       const [speciesName, posX]: [string, unknown] = entry;
+
       var category: number = 0;
       breakpoints.forEach((breakpoint: number, index: number) => {
         if (posX > breakpoint) {
@@ -245,7 +253,10 @@ const GameWindow = () => {
         setLoading(false);
         setScoreResult(response.data.gameResultScore);
 
-        console.log("Score response", response);
+        if (props.debug) {
+          console.log("Score response", response);
+        }
+
         toggleScore();
       });
   }
@@ -271,20 +282,5 @@ const GameWindow = () => {
   return renderStage();
 
 }
-
-interface ScoreWindowProps {
-  score: number;
-  speciesCards: any;
-}
-
-const ScoreWindow = (props: ScoreWindowProps) => {
-  return (
-    <div className="score-panel">
-      <span className="score-view">Score: {Math.round(props.score * 100)}%</span>
-      <br/>
-      <span>{JSON.stringify(props.speciesCards)}</span>
-    </div>
-  );
-};
 
 export default GameWindow;
