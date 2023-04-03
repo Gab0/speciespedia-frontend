@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import backendRequest from './Backend'
 
-import Loading from './Loading.js'
+import Loading from './Loading'
 import SpeciesCard from './Game/SpeciesCard'
 import ScoreWindow from './Game/ScoreWindow'
 
@@ -37,9 +37,8 @@ const GameWindow = (props: GameProps) => {
 
     setLoading(true);
     setColors(shuffle(colors));
-    console.log("REQUEST");
 
-    backendRequest('/game/new')
+    backendRequest('/game/new', {})
       .then((response) => {
         resetState();
 
@@ -47,8 +46,9 @@ const GameWindow = (props: GameProps) => {
         setGameSession(response.data);
         setStage(createStage());
 
-        console.log(response);
-
+        if (props.debug) {
+          console.log("New game response", response);
+        }
       });
   }
 
@@ -190,7 +190,6 @@ const GameWindow = (props: GameProps) => {
       </div>
     );
 
-
   }
 
   const renderSubmitAnswer = () => {
@@ -246,7 +245,9 @@ const GameWindow = (props: GameProps) => {
       answerTaxonomicDiscriminators: gameSession.gameTaxonomicDiscriminators
     }
 
-    console.log("Submitting response", answerData);
+    if (props.debug) {
+      console.log("Submitting response", answerData);
+    }
 
     backendRequest('/game/answer', answerData)
       .then((response) => {

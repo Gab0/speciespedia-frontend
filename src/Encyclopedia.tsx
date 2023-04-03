@@ -1,5 +1,5 @@
 import React from 'react';
-import { RemoteResult, SpeciesInformation } from './Types.ts'
+import { RemoteResult, SpeciesInformation } from './Types'
 import backendRequest from './Backend';
 import ReactLoading from 'react-loading';
 

@@ -24,7 +24,8 @@ const SpeciesCard = (props: SpeciesProps) => {
   };
 
   useEffect(() => {
-     updateTracker(props.x);
+    console.log("Updating tracker.")
+    updateTracker(props.x);
   });
 
   const selectImage = (imgData: any) => {
@@ -63,7 +64,6 @@ const SpeciesCard = (props: SpeciesProps) => {
     switch (event.detail) {
       case 2: {
         console.log('double click');
-
         break;
       }
       default: {

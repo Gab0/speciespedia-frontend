@@ -6,8 +6,8 @@ interface URLImageProps {
   x: number,
   y: number,
   src: string,
-  handleDragStart: any,
-  handleDragEnd: any,
+  onDragStart: any,
+  onDragEnd: any,
 }
 
 const URLImage = (props: URLImageProps) => {
@@ -55,8 +55,8 @@ const URLImage = (props: URLImageProps) => {
       width={100}
       height={100}
       shadowBlur={10}
-      onDragStart={props.handleDragStart}
-      onDragEnd={props.handleDragEnd}
+      onDragStart={props.onDragStart}
+      onDragEnd={props.onDragEnd}
       onClick={handleClick}
     />
   );
