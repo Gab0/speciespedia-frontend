@@ -1,6 +1,6 @@
 import React from 'react';
 import { RemoteResult, SpeciesInformation } from './Types.ts'
-import backendRequest from './Backend.js';
+import backendRequest from './Backend';
 import ReactLoading from 'react-loading';
 
 function taxonomyField(fieldname: String, fieldvalue: String) {

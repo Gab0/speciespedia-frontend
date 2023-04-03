@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import backendRequest from './Backend.js'
+import backendRequest from './Backend'
 
 import Loading from './Loading.js'
 import SpeciesCard from './Game/SpeciesCard'
@@ -117,7 +117,7 @@ const GameWindow = (props: GameProps) => {
     return breakpoints;
   }
 
-  const shuffle = (array: any[]) => {
+  const shuffle = (array: any[]): Array<any> => {
     let currentIndex = array.length,  randomIndex;
     while (currentIndex !== 0) {
 
