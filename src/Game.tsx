@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import backendRequest from './Backend'
 
@@ -6,7 +6,7 @@ import Loading from './Loading'
 import SpeciesCard from './Game/SpeciesCard'
 import ScoreWindow from './Game/ScoreWindow'
 
-import { RemoteResult, GameAnswer, GameSetup } from './Types';
+import { RemoteResult, GameSetup } from './Types';
 
 import { Stage,
          Layer,
@@ -19,16 +19,18 @@ interface GameProps {
   debug: boolean
 }
 
+interface CardPosition {
+  [key: string]: number;
+}
 const GameWindow = (props: GameProps) => {
 
-  const [gameSession, setGameSession] = useState<GameSetup | {}>({});
-  const [speciesCards, setSpeciesCards] = useState({});
+  const [gameSession, setGameSession] = useState<GameSetup>();
+  const [speciesCards, setSpeciesCards] = useState<CardPosition>();
   const [loading, setLoading] = useState(false);
   const [scoreResult, setScoreResult] = useState(null);
   const [colors, setColors] = useState(defaultColors);
-  const [stage, setStage] = useState({});
+  const [stage, setStage] = useState();
   const [seen, setSeen] = useState(false);
-
 
   const requestGame = (event: any) => {
     try {
@@ -60,7 +62,7 @@ const GameWindow = (props: GameProps) => {
 
 
   const renderNodes = () => {
-    var species = gameSession.species;
+    var species = gameSession!.species;
 
     if (species === undefined) return;
 
@@ -80,7 +82,7 @@ const GameWindow = (props: GameProps) => {
   }
 
   const isGameRunning = () => {
-     return Object.keys(gameSession).length !== 0;
+     return Object.keys(gameSession!).length !== 0;
   }
 
   const renderDealSamplesButton = () => {
@@ -94,7 +96,7 @@ const GameWindow = (props: GameProps) => {
   const fetchHelpText = (): string => {
     var tips;
     try {
-      tips = gameSession.textTip;
+      tips = gameSession!.textTip;
     } catch (e) {
       console.log(e);
     }
@@ -127,13 +129,12 @@ const GameWindow = (props: GameProps) => {
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
-
     return array;
   }
 
   const renderGroupZones = (totalWidth: number, h: number) => {
     var breakpoints = generateBreakPoints(
-      gameSession.nbGroups, totalWidth
+      gameSession!.nbGroups, totalWidth
     );
 
     var areas = breakpoints.map((_idx: number, idx: number) => {
@@ -208,8 +209,8 @@ const GameWindow = (props: GameProps) => {
   // and calculate in which category the player put them into.
   const extractCategorization = (): Array<Array<string>> => {
     var breakpoints = generateBreakPoints(
-      gameSession.nbGroups,
-      stage.props.width
+      gameSession!.nbGroups,
+      stage!.props.width
     );
 
     var results: string[][] = new Array(breakpoints.length)
@@ -242,7 +243,7 @@ const GameWindow = (props: GameProps) => {
 
     var answerData = {
       speciesGroups: extractCategorization.bind(this)(),
-      answerTaxonomicDiscriminators: gameSession.gameTaxonomicDiscriminators
+      answerTaxonomicDiscriminators: gameSession!.gameTaxonomicDiscriminators
     }
 
     if (props.debug) {
@@ -257,14 +258,11 @@ const GameWindow = (props: GameProps) => {
         if (props.debug) {
           console.log("Score response", response);
         }
-
         toggleScore();
       });
   }
 
-
   useEffect(() => {
-
     if (!isGameRunning()) {
       requestGame(undefined);
     }
