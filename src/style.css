@@ -1,11 +1,12 @@
 #title {
   margin: auto;
   align: center;
-  color: green;
+  color: #10a010;
   font-size: 30px;
   font-weight: bold;
   min-width: 500px;
 }
+
 .search-btn {
   background-color: #10a010;
   border-color: black;
@@ -18,7 +19,7 @@
   font-weight: bold;
   font-size: 23px;
   margin: 5px;
-  color: brown;
+  color: #524632;
 }
 
 .centering {
@@ -78,6 +79,7 @@ img {
   margin: 2em;
   padding: 0.5em;
 }
+
 .navlink {
   background-color: #10a010;
   border-color: black;
@@ -89,7 +91,7 @@ img {
 }
 
 .navlink:hover {
-  background-color: #aa77bb
+  background-color: #413c58
 }
 
 #cy {
@@ -114,7 +116,11 @@ img {
 }
 
 .score-view {
-  color: #70c060;
+  color: #10a010;
   font-weight: bold;
   font-size: 1.8em;
+}
+
+.header {
+  background-color: #413c58;
 }
