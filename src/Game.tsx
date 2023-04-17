@@ -12,6 +12,7 @@ import { Stage,
          Layer,
          Rect,
        } from 'react-konva';
+//import { Stage } from 'konva/lib/Stage';
 
 const defaultColors = ["red", "purple", "orange", "cyan", "grey", "pink", "blue"];
 
@@ -22,14 +23,19 @@ interface GameProps {
 interface CardPosition {
   [key: string]: number;
 }
+
+interface GameSession {
+
+}
+
 const GameWindow = (props: GameProps) => {
 
-  const [gameSession, setGameSession] = useState<GameSetup>();
-  const [speciesCards, setSpeciesCards] = useState<CardPosition>();
+  const [gameSession, setGameSession] = useState<null | GameSetup>(null);
+  const [speciesCards, setSpeciesCards] = useState<CardPosition>({});
   const [loading, setLoading] = useState(false);
   const [scoreResult, setScoreResult] = useState(null);
   const [colors, setColors] = useState(defaultColors);
-  const [stage, setStage] = useState();
+  const [stage, setStage] = useState<null | Element>(null);
   const [seen, setSeen] = useState(false);
 
   const requestGame = (event: any) => {
@@ -62,7 +68,9 @@ const GameWindow = (props: GameProps) => {
 
 
   const renderNodes = () => {
-    var species = gameSession!.species;
+    if (gameSession === null) return;
+
+    let species = gameSession!.species;
 
     if (species === undefined) return;
 
@@ -82,7 +90,8 @@ const GameWindow = (props: GameProps) => {
   }
 
   const isGameRunning = () => {
-     return Object.keys(gameSession!).length !== 0;
+    if (gameSession === null) return false;
+    return Object.keys(gameSession).length !== 0;
   }
 
   const renderDealSamplesButton = () => {
@@ -133,8 +142,11 @@ const GameWindow = (props: GameProps) => {
   }
 
   const renderGroupZones = (totalWidth: number, h: number) => {
+    if (!isGameRunning()) return <></>
+
+    let nbGroups = gameSession!.nbGroups;
     var breakpoints = generateBreakPoints(
-      gameSession!.nbGroups, totalWidth
+      nbGroups, totalWidth
     );
 
     var areas = breakpoints.map((_idx: number, idx: number) => {
