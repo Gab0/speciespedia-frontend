@@ -1,7 +1,7 @@
-import React from 'react';
-import { RemoteResult, SpeciesInformation } from './Types.ts'
-import backendRequest from './Backend.js';
-import ReactLoading from 'react-loading';
+import React, { ReactNode } from 'react';
+import { RemoteResult, SpeciesInformation, VernacularName } from './Types'
+import backendRequest from './Backend';
+import Loading from './Loading';
 
 function taxonomyField(fieldname: String, fieldvalue: String) {
   if (fieldvalue) {
@@ -47,49 +47,63 @@ function extractVernacularNames(vernacular: VernacularName[]): string {
   return vernacular.map(v => v.vernacularNameVernacularName).join(", ")
 }
 
-class TaxonomyDisplay extends React.Component {
+interface DisplayInterface {
+  readContent: () => RemoteResult
+}
 
-  constructor(props) {
-    super(props);
-    this.taxonomy_fields = [
-      "Kingdom",
-      "Phylum",
-      "Order",
-      "Genus",
-      "Family"
-    ]
+const TaxonomyDisplay = (props: DisplayInterface) => {
 
-  }
+  const taxonomy_fields = [
+    "Kingdom",
+    "Phylum",
+    "Order",
+    "Genus",
+    "Family"
+  ]
 
-  displaySpeciesTaxonomy(taxonomy: SpeciesInformation) {
+  const displaySpeciesTaxonomy = (taxonomy: SpeciesInformation): void[] => {
+    type taxonomyKey = keyof typeof taxonomy;
+
     return (
-      this.taxonomy_fields.map(
-        field => taxonomyField(
+      taxonomy_fields.map(
+        (field: string) => {
+          const taxonomicLevel = "speciesInformation" + field as taxonomyKey;
+          taxonomyField(
           field,
-          this.processTaxonomicField(taxonomy["speciesInformation" + field]))
+          processTaxonomicField(taxonomy[taxonomicLevel]))
+        }
       )
     )
   }
 
-  processTaxonomicField(value: String) {
+  const processTaxonomicField = (value: String) => {
     if (value == null) return "-"
     return value
   }
 
-  render() {
+  const getInformation = (): SpeciesInformation | null => {
     try {
-      var k = this.props.readContent().remoteResultInformation;
+      return props.readContent().remoteResultInformation;
     } catch(e) {
       console.log(e);
+      return null;
     }
+  }
+
+  const k = getInformation();
+
+  if (k === null) {
+    return (null);
+  } else {
     return (
       <div>
-        { this.displaySpeciesTaxonomy(k) }
+        { displaySpeciesTaxonomy(k) }
       </div>
     )
   }
 
 }
+
 
 class SpeciesDisplay extends React.Component {
   constructor(props) {
@@ -220,7 +234,7 @@ class SearchForm extends React.Component {
 
   submit_btn() {
     if (this.state.loading) {
-      return <ReactLoading type="spokes" color="#55dd44"/>;
+      return <Loading type="spokes" color="#55dd44"/>;
     }
      return <input type="submit" className="navlink navbtn" value="Search" />
   }
@@ -243,7 +257,7 @@ class Encyclopedia extends React.Component {
     return this.state.query;
   }
 
-  updateQuery(query_string) {
+  updateQuery(query_string: string) {
     this.setState({query: query_string});
   }
 

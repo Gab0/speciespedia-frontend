@@ -30,16 +30,22 @@ const Navbar = () => {
 class MainPage extends React.Component {
   render () {
 
-    return <center>
-             <Router>
-               <TitleScreen/>
-               <Navbar/>
-               <Routes>
-                 <Route path='/' element={<Encyclopedia/>} />
-                 <Route path='/game' element={<GameWindow/>} />
-               </Routes>
-             </Router>
-           </center>
+    return (
+      <center>
+          <Router>
+              <div className="header">
+                  <TitleScreen/>
+                  <Navbar/>
+
+              </div>
+              <Routes>
+                  <Route path='/' element={<Encyclopedia/>} />
+                  <Route path='/game' element={<GameWindow debug={false}/>} />
+                  <Route path='/game/debug' element={<GameWindow debug={true}/>} />
+              </Routes>
+          </Router>
+      </center>
+    )
   }
 }
 
