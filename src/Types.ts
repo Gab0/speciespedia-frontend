@@ -82,4 +82,4 @@ interface ITaxonomicDiscriminators {
   groupDiscriminator: number;
 }
 
-export type { RemoteResult, GameAnswer, GameSetup, SpeciesInformation };
+export type { RemoteResult, GameAnswer, GameSetup, SpeciesInformation, VernacularName };
